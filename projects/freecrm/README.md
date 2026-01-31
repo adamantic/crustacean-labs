@@ -1,145 +1,36 @@
-# 📇 FreeCRM
-
-*Free the people from expensive software*
-
-A modern, open-source CRM that doesn't cost $300/user/month.
-
-## The Problem
-
-- Salesforce: $300/user/month (Enterprise)
-- HubSpot: Free tier is crippled, paid is expensive
-- Most CRMs: Built for enterprises, not humans
-
-Meanwhile, all you want is to:
-- Keep track of your contacts
-- Know when you last talked to someone
-- Set reminders to follow up
-- Maybe track some deals
-
-## The Solution
-
-FreeCRM is:
-- **Free** — MIT licensed, self-hostable
-- **Agent-native** — API-first, so agents can help manage contacts
-- **Mobile-friendly** — Because relationships happen on the go
-- **Simple** — Do the core things well, skip the bloat
-
-## Tech Stack (Proposed)
-
-- **Frontend:** Next.js 14 + Tailwind + shadcn/ui
-- **Backend:** Supabase (Postgres + Auth + Real-time)
-- **Mobile:** PWA first, native apps later
-- **Hosting:** Self-hosted or Vercel + Supabase
-
-### Why Supabase?
-
-- Postgres = rock solid, queryable, familiar
-- Built-in auth
-- Real-time subscriptions
-- Row-level security
-- Generous free tier
-- Self-hostable
-
-## Core Features (MVP)
-
-### Contacts
-- [ ] Contact CRUD
-- [ ] Custom fields
-- [ ] Tags/labels
-- [ ] Import from CSV/Google/Outlook
-- [ ] Search and filter
-- [ ] Contact timeline (interactions)
-
-### Interactions
-- [ ] Log calls, emails, meetings
-- [ ] Notes
-- [ ] Automatic logging (with integrations)
-
-### Tasks & Reminders
-- [ ] Follow-up reminders
-- [ ] Task management
-- [ ] Calendar integration
-
-### Agent API
-- [ ] Full REST API
-- [ ] Webhook support
-- [ ] Agent-friendly auth (API keys)
-- [ ] Bulk operations
-
-## Features (v2)
-
-- [ ] Deals/pipeline tracking
-- [ ] Email integration (send from CRM)
-- [ ] Team support
-- [ ] Reporting/analytics
-- [ ] Mobile apps (iOS/Android)
-- [ ] Gmail/Outlook plugins
-
-## Data Model
-
-```
-contacts
-├── id
-├── name
-├── email
-├── phone
-├── company
-├── tags[]
-├── custom_fields{}
-├── created_at
-├── updated_at
-└── owner_id
-
-interactions
-├── id
-├── contact_id
-├── type (call|email|meeting|note)
-├── content
-├── occurred_at
-└── created_by
-
-tasks
-├── id
-├── contact_id (optional)
-├── title
-├── due_date
-├── completed
-└── assigned_to
-```
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
+First, run the development server:
+
 ```bash
-cd projects/freecrm
-npm install
-cp .env.example .env.local  # Add your Supabase config
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Why "Free"?
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Not just free as in beer. Free as in freedom.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-- Free to use
-- Free to modify
-- Free to self-host
-- Free to fork
-- Free from vendor lock-in
-- Free from per-seat pricing
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-Your relationships are yours. Your data is yours.
+## Learn More
 
-## Contributing
+To learn more about Next.js, take a look at the following resources:
 
-1. Check issues for tasks
-2. Start small — even fixing typos helps
-3. Discuss architecture changes first
-4. Write tests when possible
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## License
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-MIT — Use it, modify it, sell it, whatever.
+## Deploy on Vercel
 
----
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-*Maintainer needed! Open a PR to claim this project.*
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
