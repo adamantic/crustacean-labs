@@ -1,106 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { Contact, CreateContactInput } from "@/types/contact";
-
-// Shared in-memory store
-const contacts: Map<string, Contact> = new Map();
+import { auth } from "@clerk/nextjs/server";
+import { bulkCreateContacts, ensureUser } from "@/db";
 
 /**
  * POST /api/contacts/bulk
- * Bulk create/update contacts - AGENT FRIENDLY! 🦀
- * 
- * Body: { contacts: CreateContactInput[] }
- * 
- * Features:
- * - Deduplication by email (upsert behavior)
- * - Returns created, updated, and failed counts
- * - Processes up to 100 contacts per request
+ * Bulk create contacts
  */
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const inputContacts: CreateContactInput[] = body.contacts;
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-    if (!Array.isArray(inputContacts)) {
+  try {
+    const body = await request.json() as {
+      contacts?: Array<{
+        firstName: string;
+        lastName: string;
+        email?: string;
+        phone?: string;
+        company?: string;
+        jobTitle?: string;
+        notes?: string;
+      }>;
+    };
+
+    if (!Array.isArray(body.contacts) || body.contacts.length === 0) {
       return NextResponse.json(
-        { error: "Body must contain 'contacts' array" },
+        { error: "contacts array is required" },
         { status: 400 }
       );
     }
 
-    if (inputContacts.length > 100) {
+    if (body.contacts.length > 100) {
       return NextResponse.json(
         { error: "Maximum 100 contacts per request" },
         { status: 400 }
       );
     }
 
-    const results = {
-      created: [] as Contact[],
-      updated: [] as Contact[],
-      failed: [] as { input: CreateContactInput; error: string }[],
-    };
-
-    for (const input of inputContacts) {
-      // Validate required fields
-      if (!input.name || !input.email) {
-        results.failed.push({
-          input,
-          error: "Name and email are required",
-        });
-        continue;
-      }
-
-      // Check for existing contact by email (case-insensitive)
-      const existing = Array.from(contacts.values()).find(
-        (c) => c.email.toLowerCase() === input.email.toLowerCase()
-      );
-
-      if (existing) {
-        // Update existing contact
-        const updated: Contact = {
-          ...existing,
-          name: input.name,
-          phone: input.phone ?? existing.phone,
-          company: input.company ?? existing.company,
-          tags: input.tags ?? existing.tags,
-          customFields: { ...existing.customFields, ...input.customFields },
-          updatedAt: new Date(),
-        };
-        contacts.set(existing.id, updated);
-        results.updated.push(updated);
-      } else {
-        // Create new contact
-        const contact: Contact = {
-          id: crypto.randomUUID(),
-          name: input.name,
-          email: input.email,
-          phone: input.phone,
-          company: input.company,
-          tags: input.tags || [],
-          customFields: input.customFields || {},
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          ownerId: "demo",
-        };
-        contacts.set(contact.id, contact);
-        results.created.push(contact);
-      }
-    }
+    ensureUser(userId, 'user@example.com');
+    const created = bulkCreateContacts(userId, body.contacts);
 
     return NextResponse.json({
-      success: true,
-      summary: {
-        created: results.created.length,
-        updated: results.updated.length,
-        failed: results.failed.length,
-        total: inputContacts.length,
-      },
-      results,
-    });
+      created: created.length,
+      contacts: created,
+    }, { status: 201 });
   } catch (error) {
+    console.error("Error bulk creating contacts:", error);
     return NextResponse.json(
-      { error: "Invalid request body" },
-      { status: 400 }
+      { error: "Failed to create contacts" },
+      { status: 500 }
     );
   }
 }

@@ -20,4 +20,4 @@ export interface CreateContactInput {
   customFields?: Record<string, string>;
 }
 
-export interface UpdateContactInput extends Partial<CreateContactInput> {}
+export type UpdateContactInput = Partial<CreateContactInput>;

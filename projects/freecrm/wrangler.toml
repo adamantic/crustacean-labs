@@ -1,6 +1,12 @@
 name = "freecrm"
 compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".next"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "freecrm-db"
+database_id = "5eaae95c-fb8e-4c16-961c-2f77667027a7"
 
 [vars]
 NEXT_PUBLIC_APP_NAME = "FreeCRM"
